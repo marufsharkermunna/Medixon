@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Medixon — Dashboard detailed spec</title>
+<style>
+  :root{
+    --primary:#6366f1;--primary2:#4f46e5;--primary-lt:rgba(99,102,241,.12);
+    --med-green:#34d399;--med-teal:#2dd4bf;
+    --dark:#0a0a12;--text-d:#0f0f1a;--text-d2:#3d3d5c;--text-d3:#7c7c9e;
+    --white2:#f4f5fb;--white3:#eef0f8;--border:#e5e7eb;
+    --radius-sm:8px;--radius:12px;--radius-lg:18px;
+    --shadow-sm:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+  }
+  *{box-sizing:border-box;}
+  body{font-family:'Plus Jakarta Sans',-apple-system,Segoe UI,Roboto,sans-serif;background:#f7f7fb;color:var(--text-d);margin:0;line-height:1.5;}
+  .wrap{max-width:1000px;margin:0 auto;padding:40px 28px 100px;}
+  h1.doc-title{font-size:1.9rem;font-weight:800;margin:0 0 6px;letter-spacing:-.5px;}
+  p.doc-sub{color:var(--text-d3);font-size:14px;margin:0 0 40px;}
+  h2.sec{font-size:1.2rem;font-weight:800;margin:44px 0 14px;padding-top:14px;border-top:2px solid var(--text-d);}
+  h2.sec .n{color:var(--primary);margin-right:6px;}
+
+  .spec-block{border:1px solid var(--border);border-radius:var(--radius);background:#fff;margin-bottom:16px;overflow:hidden;}
+  .spec-block .sb-head{background:var(--dark);color:#fff;padding:10px 18px;font-weight:700;font-size:13.5px;}
+  .spec-block .sb-body{padding:16px 18px;}
+  table.measure{width:100%;border-collapse:collapse;font-size:13px;}
+  table.measure th{text-align:left;color:var(--text-d3);font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;padding:6px 8px;border-bottom:1.5px solid var(--text-d);}
+  table.measure td{padding:8px;border-bottom:1px solid var(--border);}
+  table.measure code{background:var(--white3);padding:2px 5px;border-radius:4px;font-size:12px;color:var(--primary2);}
+
+  /* live-ish rendered preview matching actual CSS */
+  .render{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:8px;}
+  .r-header{background:rgba(10,10,18,.94);height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;}
+  .r-logo{font-size:20px;font-weight:800;background:linear-gradient(135deg,#6366f1,#a855f7,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  .r-nav{display:flex;gap:3px;flex-wrap:wrap;}
+  .r-nav a{color:rgba(255,255,255,.75);font-size:12px;font-weight:500;padding:6px 10px;border-radius:8px;text-decoration:none;}
+  .r-nav a.active{color:#fff;background:rgba(99,102,241,.2);}
+  .r-body{background:var(--white2);padding:36px 24px;}
+  .r-title{font-size:1.75rem;font-weight:800;margin-bottom:24px;letter-spacing:-.5px;}
+  .r-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+  .r-stat{background:#fff;border-radius:18px;padding:20px 22px;border:1px solid rgba(0,0,0,.06);box-shadow:var(--shadow-sm);}
+  .r-stat .lbl{font-size:11px;font-weight:600;color:var(--text-d3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;}
+  .r-stat .val{font-size:2rem;font-weight:800;}
+  .r-tabs{display:inline-flex;gap:8px;background:#fff;padding:10px;border-radius:18px;border:1px solid rgba(0,0,0,.06);box-shadow:var(--shadow-sm);margin-bottom:18px;}
+  .r-tab{padding:10px 20px;border-radius:12px;font-size:13.5px;font-weight:600;color:var(--text-d2);}
+  .r-tab.active{background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;}
+  .r-filters{display:flex;gap:12px;background:#fff;padding:16px 20px;border-radius:18px;border:1px solid rgba(0,0,0,.06);box-shadow:var(--shadow-sm);margin-bottom:22px;flex-wrap:wrap;}
+  .r-filters input,.r-filters select{flex:1;min-width:150px;padding:9px 14px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13.5px;}
+  .r-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  .r-card{background:#fff;border-radius:18px;padding:22px;border:1px solid rgba(0,0,0,.06);box-shadow:var(--shadow-sm);}
+  .r-card h3{margin:0 0 6px;font-size:15.5px;font-weight:700;}
+  .r-card p{margin:0 0 14px;font-size:13px;color:var(--text-d2);}
+  .r-card .btn-row{display:flex;gap:10px;}
+  .r-card .btn{flex:1;padding:9px 14px;border-radius:8px;font-size:13px;font-weight:600;text-align:center;}
+  .r-card .btn-primary{background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;}
+  .r-card .btn-ghost{background:var(--white3);color:var(--text-d2);}
+
+  .measure-note{font-size:12px;color:var(--text-d3);margin:4px 0 20px;}
+  ul.list{margin:0;padding-left:18px;font-size:13px;color:var(--text-d2);}
+  ul.list li{margin-bottom:5px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1 class="doc-title">Dashboard — build-ready spec</h1>
+<p class="doc-sub">Exact measurements pulled from the live CSS (style.css). Build this as one 1440px-wide Figma frame, top to bottom, using the components you already set up from the main design spec.</p>
+
+<div class="render">
+  <div class="r-header">
+    <div class="r-logo">⚕ MediXon</div>
+    <div class="r-nav">
+      <a href="#" class="active">Dashboard</a><a href="#">+ Equipment</a><a href="#">+ Medicine</a>
+      <a href="#">Equipment</a><a href="#">Medicine</a><a href="#">My Requests</a>
+      <a href="#">Received</a><a href="#">Chat</a><a href="#">Profile</a><a href="#">Logout</a>
+    </div>
+  </div>
+  <div class="r-body">
+    <div class="r-title">Dashboard</div>
+    <div class="r-stats">
+      <div class="r-stat"><div class="lbl">My Equipment</div><div class="val" style="color:#6366f1">4</div></div>
+      <div class="r-stat"><div class="lbl">My Medicines</div><div class="val" style="color:#2dd4bf">2</div></div>
+      <div class="r-stat"><div class="lbl">Requests Received</div><div class="val" style="color:#3b82f6">3</div></div>
+      <div class="r-stat"><div class="lbl">Messages</div><div class="val" style="color:#10b981">7</div></div>
+    </div>
+    <div class="r-tabs">
+      <div class="r-tab active">🩺 Equipment Listings</div>
+      <div class="r-tab">💊 Medicine Listings</div>
+    </div>
+    <div class="r-filters">
+      <input placeholder="Search equipment...">
+      <select><option>All Categories</option></select>
+      <select><option>All Conditions</option></select>
+      <select><option>All Modes</option></select>
+    </div>
+    <div class="r-grid">
+      <div class="r-card"><h3>Wheelchair — Foldable</h3><p>Dhanmondi, Dhaka · Used · Donate</p><div class="btn-row"><div class="btn btn-primary">Request</div><div class="btn btn-ghost">Details</div></div></div>
+      <div class="r-card"><h3>Hospital Bed</h3><p>Mirpur, Dhaka · New · Rent</p><div class="btn-row"><div class="btn btn-primary">Request</div><div class="btn btn-ghost">Details</div></div></div>
+      <div class="r-card"><h3>Oxygen Concentrator</h3><p>Uttara, Dhaka · Used · Swap</p><div class="btn-row"><div class="btn btn-primary">Request</div><div class="btn btn-ghost">Details</div></div></div>
+    </div>
+  </div>
+</div>
+<p class="measure-note">Above: rendered preview at real proportions — use this as your visual reference while placing frames.</p>
+
+<h2 class="sec"><span class="n">1</span>Header / nav bar</h2>
+<div class="spec-block">
+  <div class="sb-head">header</div>
+  <div class="sb-body">
+    <table class="measure">
+      <tr><th>Property</th><th>Value</th></tr>
+      <tr><td>Height</td><td><code>64px</code>, sticky top, z-index 100</td></tr>
+      <tr><td>Background</td><td><code>rgba(10,10,18,.94)</code> + backdrop blur 20px</td></tr>
+      <tr><td>Bottom border</td><td>1px, <code>rgba(255,255,255,.06)</code></td></tr>
+      <tr><td>Horizontal padding</td><td><code>32px</code> (2rem) both sides</td></tr>
+      <tr><td>Layout</td><td>flex, space-between, align-center</td></tr>
+      <tr><td>Logo</td><td>20px / 800 weight, gradient text fill (Grad Main), gap 6px to icon</td></tr>
+      <tr><td>Nav links</td><td>12–13px / 500, padding 6px 10–11px, radius 8px, color <code>rgba(255,255,255,.75)</code></td></tr>
+      <tr><td>Active link</td><td>white text + <code>rgba(99,102,241,.2)</code> pill background</td></tr>
+      <tr><td>Logout link</td><td>same style, red tint on hover: <code>rgba(239,68,68,.85)</code></td></tr>
+      <tr><td>Nav item order</td><td>Dashboard | divider | + Equipment, + Medicine | divider | Equipment, Medicine | divider | My Requests, Received, Chat, Profile, Logout</td></tr>
+    </table>
+  </div>
+</div>
+
+<h2 class="sec"><span class="n">2</span>Page container</h2>
+<div class="spec-block">
+  <div class="sb-body">
+    <table class="measure">
+      <tr><th>Property</th><th>Value</th></tr>
+      <tr><td>Max width</td><td><code>1100px</code>, centered</td></tr>
+      <tr><td>Padding</td><td><code>40px 24px</code> (2.5rem 1.5rem)</td></tr>
+      <tr><td>Background</td><td><code>#f4f5fb</code> (--white2)</td></tr>
+      <tr><td>Page title</td><td>"Dashboard" — 28px (1.75rem) / 800, margin-bottom 28px</td></tr>
+    </table>
+  </div>
+</div>
+
+<h2 class="sec"><span class="n">3</span>Stat cards row</h2>
+<div class="spec-block">
+  <div class="sb-body">
+    <table class="measure">
+      <tr><th>Property</th><th>Value</th></tr>
+      <tr><td>Grid</td><td>auto-fit, min column 200px, 4 columns on desktop, gap 16px</td></tr>
+      <tr><td>Card style</td><td>white bg, radius 18px, padding 22px 24px, 1px border <code>rgba(0,0,0,.06)</code>, shadow-sm</td></tr>
+      <tr><td>Label</td><td>11px uppercase / 600, letter-spacing .6px, color <code>#7c7c9e</code>, margin-bottom 6px</td></tr>
+      <tr><td>Value</td><td>32px (2rem) / 800, line-height 1</td></tr>
+      <tr><td>Cards + value colors</td><td>My Equipment → indigo #6366f1 · My Medicines → med-teal #2dd4bf · Requests Received → blue #3b82f6 · Messages → green #10b981</td></tr>
+    </table>
+  </div>
+</div>
+
+<h2 class="sec"><span class="n">4</span>Tab switcher</h2>
+<div class="spec-block">
+  <div class="sb-body">
+    <table class="measure">
+      <tr><th>Property</th><th>Value</th></tr>
+      <tr><td>Container</td><td>inline flex, gap 8px, white bg, padding 10px, radius 18px, border + shadow-sm, width fits content</td></tr>
+      <tr><td>Tab button</td><td>padding 10px 20px, radius 12px, font 13.5px/600, transparent bg, color <code>#3d3d5c</code></td></tr>
+      <tr><td>Active tab (Equipment)</td><td>Grad Button fill (#6366f1→#4f46e5), white text, shadow <code>0 2px 8px rgba(99,102,241,.25)</code></td></tr>
+      <tr><td>Active tab (Medicine)</td><td>Grad Medicine fill (#34d399→#2dd4bf), shadow <code>0 2px 8px rgba(52,211,153,.25)</code></td></tr>
+      <tr><td>Labels</td><td>"🩺 Equipment Listings" / "💊 Medicine Listings"</td></tr>
+    </table>
+  </div>
+</div>
+
+<h2 class="sec"><span class="n">5</span>Medicine banner (Medicine tab only)</h2>
+<div class="spec-block">
+  <div class="sb-body">
+    <table class="measure">
+      <tr><th>Property</th><th>Value</th></tr>
+      <tr><td>Background</td><td>gradient <code>rgba(52,211,153,.1)→rgba(45,212,191,.08)</code></td></tr>
+      <tr><td>Border</td><td>1px <code>rgba(52,211,153,.2)</code>, radius 18px</td></tr>
+      <tr><td>Padding</td><td>18px 24px, flex row, gap 14px, icon 28px</td></tr>
+      <tr><td>Heading</td><td>15px/700, color <code>#047857</code></td></tr>
+      <tr><td>Body text</td><td>13px, color <code>#065f46</code></td></tr>
+      <tr><td>Copy</td><td>"Medicine Sharing" / "Browse and request medicines from your community. Only sealed or partial packs from trusted users."</td></tr>
+    </table>
+  </div>
+</div>
+
+<h2 class="sec"><span class="n">6</span>Filters row</h2>
+<div class="spec-block">
+  <div class="sb-body">
+    <table class="measure">
+      <tr><th>Property</th><th>Value</th></tr>
+      <tr><td>Container</td><td>white bg, padding 16px 20px, radius 18px, border + shadow-sm, flex wrap, gap 12px, margin-bottom 24px</td></tr>
+      <tr><td>Fields</td><td>flex:1, min-width 150px, padding 9px 14px, border 1.5px <code>#e5e7eb</code>, radius 8px, font 13.5px</td></tr>
+      <tr><td>Equipment fields</td><td>Search text · Category select · Condition select · Mode select (Donate/Swap/Rent/Low Price Sale)</td></tr>
+      <tr><td>Medicine fields</td><td>Search text · Category select · Form select · Mode select</td></tr>
+      <tr><td>Focus state</td><td>border → primary color, 3px glow ring <code>rgba(99,102,241,.12)</code> (med-teal ring on Medicine tab)</td></tr>
+    </table>
+  </div>
+</div>
+
+<h2 class="sec"><span class="n">7</span>Listing card grid</h2>
+<div class="spec-block">
+  <div class="sb-body">
+    <table class="measure">
+      <tr><th>Property</th><th>Value</th></tr>
+      <tr><td>Grid</td><td>auto-fill, min column 300px, gap 18px (1.1rem)</td></tr>
+      <tr><td>Card</td><td>white bg, radius 18px, padding 22px, border 1px <code>rgba(0,0,0,.06)</code>, shadow-sm, flex column</td></tr>
+      <tr><td>Hover</td><td>translateY(-2px), shadow raised, border tints toward accent color</td></tr>
+      <tr><td>Card title</td><td>15.5px/700</td></tr>
+      <tr><td>Card body text</td><td>13px, color <code>#3d3d5c</code>, margin-top 6px; bold sub-values in <code>#0f0f1a</code></td></tr>
+      <tr><td>Optional image</td><td>full width, 150px height, object-fit cover, radius 8px, margin-top 14px</td></tr>
+      <tr><td>Action row</td><td>margin-top auto (pinned to card bottom), padding-top 16px, flex gap 10px</td></tr>
+      <tr><td>Buttons</td><td>flex:1, padding 9px 14px, radius 8px, font 13px/600 — primary = Request, ghost = Details</td></tr>
+      <tr><td>Empty state</td><td>centered placeholder text when no listings, e.g. "Loading equipment..." / "No listings found"</td></tr>
+    </table>
+  </div>
+</div>
+
+<h2 class="sec"><span class="n">8</span>Figma build order</h2>
+<div class="spec-block">
+  <div class="sb-body">
+    <ul class="list">
+      <li>Frame: 1440 × auto, background <code>#f4f5fb</code></li>
+      <li>Drop in Header component (instance, 64px height, full width) — pin top</li>
+      <li>Add Auto Layout container, 1100px wide centered, padding 40 24, gap 28 between children</li>
+      <li>Page title text layer (28px/800)</li>
+      <li>Stat card row: Auto Layout horizontal, 4 Stat Card instances, gap 16, fill container</li>
+      <li>Tab switcher: Auto Layout horizontal, hug contents, 2 Tab instances (1 active)</li>
+      <li>(Medicine tab variant only) Medicine banner instance</li>
+      <li>Filters row: Auto Layout horizontal, 4 Input/Select instances, gap 12, fill container</li>
+      <li>Card grid: Auto Layout grid or wrap, 3 columns at 1440px, gap 18, Listing Card instances</li>
+      <li>Footer component pinned to bottom</li>
+    </ul>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

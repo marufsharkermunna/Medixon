@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Medixon — Design Spec for Figma</title>
+<style>
+  :root{
+    --primary:#6366f1;--primary2:#4f46e5;
+    --cyan:#06b6d4;--cyan2:#0891b2;
+    --green:#10b981;--green2:#059669;
+    --orange:#f59e0b;--orange2:#d97706;
+    --purple:#a855f7;--purple2:#9333ea;
+    --red:#ef4444;--red2:#dc2626;--pink:#ec4899;
+    --med-green:#34d399;--med-teal:#2dd4bf;
+    --dark:#0a0a12;--surface:#16162a;--surface2:#1e1e35;
+    --text-d:#0f0f1a;--text-d2:#3d3d5c;--text-d3:#7c7c9e;
+    --border:#e5e7eb;--bg-page:#f7f7fb;
+    --radius-sm:8px;--radius:12px;--radius-lg:18px;--radius-xl:24px;
+  }
+  *{box-sizing:border-box;}
+  body{font-family:'Plus Jakarta Sans',-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg-page);color:var(--text-d);margin:0;padding:0;line-height:1.5;}
+  .wrap{max-width:1080px;margin:0 auto;padding:48px 32px 100px;}
+  header.doc-head{background:var(--dark);color:#fff;padding:56px 32px;text-align:center;}
+  header.doc-head h1{font-size:2.4rem;font-weight:800;margin:0 0 8px;letter-spacing:-1px;}
+  header.doc-head p{color:rgba(255,255,255,.6);font-size:15px;max-width:560px;margin:0 auto;}
+  h2.section-title{font-size:1.5rem;font-weight:800;margin:64px 0 8px;padding-top:16px;border-top:2px solid var(--text-d);letter-spacing:-.3px;}
+  h2.section-title .num{color:var(--primary);margin-right:8px;}
+  p.section-desc{color:var(--text-d3);font-size:14.5px;margin:0 0 28px;max-width:680px;}
+  h3.sub{font-size:1.05rem;font-weight:700;margin:32px 0 14px;}
+  table.spec{width:100%;border-collapse:collapse;font-size:13.5px;margin-bottom:8px;}
+  table.spec th{text-align:left;color:var(--text-d3);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;padding:8px 10px;border-bottom:1.5px solid var(--text-d);}
+  table.spec td{padding:10px;border-bottom:1px solid var(--border);vertical-align:middle;}
+  code{background:#eef0f8;padding:2px 6px;border-radius:5px;font-size:12.5px;font-family:'SF Mono',Consolas,monospace;color:var(--primary2);}
+
+  /* color swatches */
+  .swatch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-bottom:8px;}
+  .swatch{border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);background:#fff;}
+  .swatch .fill{height:64px;}
+  .swatch .info{padding:10px 12px;}
+  .swatch .info .name{font-weight:700;font-size:12.5px;}
+  .swatch .info .hex{font-size:11.5px;color:var(--text-d3);font-family:monospace;}
+  .swatch .info .var{font-size:10.5px;color:var(--primary2);font-family:monospace;display:block;margin-top:2px;}
+
+  /* type scale */
+  .type-row{display:flex;align-items:baseline;gap:20px;padding:14px 0;border-bottom:1px solid var(--border);}
+  .type-row .sample{flex:1;font-weight:800;color:var(--text-d);}
+  .type-row .meta{width:220px;font-size:12px;color:var(--text-d3);font-family:monospace;flex-shrink:0;}
+
+  /* component previews */
+  .preview{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin:14px 0;display:flex;flex-wrap:wrap;gap:12px;align-items:center;}
+  .btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:var(--radius);font-weight:600;font-size:14px;cursor:pointer;border:none;}
+  .btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;}
+  .btn-success{background:linear-gradient(135deg,var(--green),var(--cyan));color:#fff;}
+  .btn-danger{background:var(--red);color:#fff;}
+  .btn-secondary{background:#f4f5fb;color:var(--text-d);border:1px solid var(--border);}
+  .badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:11.5px;font-weight:700;}
+  .badge-green{background:rgba(16,185,129,.12);color:var(--green2);}
+  .badge-orange{background:rgba(245,158,11,.12);color:var(--orange2);}
+  .badge-red{background:rgba(239,68,68,.12);color:var(--red2);}
+  .card-demo{border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;width:220px;box-shadow:0 4px 16px rgba(0,0,0,.08);}
+  .card-demo .cd-title{font-weight:700;font-size:14px;margin-bottom:4px;}
+  .card-demo .cd-sub{font-size:12px;color:var(--text-d3);}
+  .input-demo{padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13.5px;width:200px;}
+
+  /* sitemap */
+  .sitemap{display:flex;flex-direction:column;gap:6px;font-size:13.5px;}
+  .sitemap .tier1{font-weight:700;padding:8px 0 4px;}
+  .sitemap .tier2{padding-left:20px;color:var(--text-d2);position:relative;}
+  .sitemap .tier2:before{content:"↳";position:absolute;left:2px;color:var(--text-d3);}
+
+  /* page cards */
+  .page-card{border:1px solid var(--border);border-radius:var(--radius);margin-bottom:20px;overflow:hidden;background:#fff;}
+  .page-card .pc-head{background:var(--dark);color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;}
+  .page-card .pc-head .pname{font-weight:700;font-size:15px;}
+  .page-card .pc-head .proute{font-size:11.5px;color:rgba(255,255,255,.5);font-family:monospace;}
+  .page-card .pc-body{padding:18px 20px;}
+  .page-card .pc-body .row{display:flex;gap:20px;margin-bottom:10px;font-size:13px;}
+  .page-card .pc-body .row .lab{width:110px;flex-shrink:0;font-weight:700;color:var(--text-d3);font-size:11px;text-transform:uppercase;letter-spacing:.4px;padding-top:2px;}
+  .page-card .pc-body .row .val{flex:1;color:var(--text-d2);}
+  .wireframe{background:#f4f5fb;border:1px dashed #c7c9db;border-radius:8px;padding:14px;font-family:monospace;font-size:11.5px;color:var(--text-d2);white-space:pre;overflow-x:auto;line-height:1.6;}
+
+  .toc{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:20px 26px;margin-top:-24px;}
+  .toc a{color:var(--text-d2);text-decoration:none;font-size:13.5px;display:block;padding:4px 0;}
+  .toc a:hover{color:var(--primary2);}
+  .toc-grid{columns:2;gap:24px;}
+</style>
+</head>
+<body>
+
+<header class="doc-head">
+  <h1>Medixon — Design Spec</h1>
+  <p>Reference document for rebuilding the UI in Figma. Contains the full design system (colors, type, components) extracted from the live codebase, plus a layout spec for every screen. Use the hex values, spacing tokens and layout descriptions below to set up your Figma variables, styles and frames.</p>
+</header>
+
+<div class="wrap">
+
+<div class="toc">
+  <div class="toc-grid">
+    <a href="#colors">1. Color palette</a>
+    <a href="#type">2. Typography</a>
+    <a href="#tokens">3. Spacing, radius, shadow</a>
+    <a href="#components">4. Components</a>
+    <a href="#sitemap">5. Sitemap</a>
+    <a href="#pages">6. Page-by-page layout spec</a>
+  </div>
+</div>
+
+<h2 class="section-title" id="colors"><span class="num">1</span>Color palette</h2>
+<p class="section-desc">Set these up as Figma color variables first (one collection called "Medixon/Color"). Two modes are used across the app: a dark hero/nav mode and a light content mode.</p>
+
+<h3 class="sub">Brand / accent ramps</h3>
+<div class="swatch-grid">
+  <div class="swatch"><div class="fill" style="background:#6366f1"></div><div class="info"><span class="name">Primary (Indigo)</span><span class="hex">#6366f1</span><span class="var">--primary</span></div></div>
+  <div class="swatch"><div class="fill" style="background:#4f46e5"></div><div class="info"><span class="name">Primary Dark</span><span class="hex">#4f46e5</span><span class="var">--primary2</span></div></div>
+  <div class="swatch"><div class="fill" style="background:#06b6d4"></div><div class="info"><span class="name">Cyan</span><span class="hex">#06b6d4</span><span class="var">--cyan</span></div></div>
+  <div class="swatch"><div class="fill" style="background:#0891b2"></div><div class="info"><span class="name">Cyan Dark</span><span class="hex">#0891b2</span><span class="var">--cyan2</span></div></div>
+  <div class="swatch"><div class="fill" style="background:#a855f7"></div><div class="info"><span class="name">Purple</span><span class="hex">#a855f7</span><span class="var">--purple</span></div></div>
+  <div class="swatch"><div class="fill" style="background:#9333ea"></div><div class="info"><span class="name">Purple Dark</span><span class="hex">#9333ea</span><span class="var">--purple2</span></div></div>
+</div>
+
+<h3 class="sub">Semantic ramps</h3>
+<div class="swatch-grid">
+  <div class="swatch"><div class="fill" style="background:#10b981"></div><div class="info"><span class="name">Success / Green</span><span class="hex">#10b981</span><span class="var">--green</span></div></div>
+  <div class="swatch"><div class="fill" style="background:#059669"></div><div class="info"><span class="name">Success Dark</span><span class="hex">#059669</span><span class="var">--green2</span></div></div>
+  <div class="swatch"><div class="fill" style="background:#f59e0b"></div><div class="info"><span class="name">Warning / Amber</span><span class="hex">#f59e0b</span><span class="var">--orange</span></div></div>
+  <div class="swatch"><div class="fill" style="background:#d97706"></div><div class="info"><span class="name">Warning Dark</span><span class="hex">#d97706</span><span class="var">--orange2</span></div></div>
+  <div class="swatch"><div class="fill" style="background:#ef4444"></div><div class="info"><span class="name">Danger / Red</span><span class="hex">#ef4444</span><span class="var">--red</span></div></div>
+  <div class="swatch"><div class="fill" style="background:#dc2626"></div><div class="info"><span class="name">Danger Dark</span><span class="hex">#dc2626</span><span class="var">--red2</span></div></div>
+  <div class="swatch"><div class="fill" style="background:#ec4899"></div><div class="info"><span class="name">Pink (accent)</span><span class="hex">#ec4899</span><span class="var">--pink</span></div></div>
+  <div class="swatch"><div class="fill" style="background:#34d399"></div><div class="info"><span class="name">Medicine Green</span><span class="hex">#34d399</span><span class="var">--med-green</span></div></div>
+  <div class="swatch"><div class="fill" style="background:#2dd4bf"></div><div class="info"><span class="name">Medicine Teal</span><span class="hex">#2dd4bf</span><span class="var">--med-teal</span></div></div>
+</div>
+
+<h3 class="sub">Neutrals & surfaces</h3>
+<div class="swatch-grid">
+  <div class="swatch"><div class="fill" style="background:#0a0a12"></div><div class="info"><span class="name">Dark bg</span><span class="hex">#0a0a12</span><span class="var">--dark</span></div></div>
+  <div class="swatch"><div class="fill" style="background:#16162a"></div><div class="info"><span class="name">Dark surface</span><span class="hex">#16162a</span><span class="var">--surface</span></div></div>
+  <div class="swatch"><div class="fill" style="background:#1e1e35"></div><div class="info"><span class="name">Dark surface 2</span><span class="hex">#1e1e35</span><span class="var">--surface2</span></div></div>
+  <div class="swatch"><div class="fill" style="background:#0f0f1a"></div><div class="info"><span class="name">Text (dark)</span><span class="hex">#0f0f1a</span><span class="var">--text-d</span></div></div>
+  <div class="swatch"><div class="fill" style="background:#3d3d5c"></div><div class="info"><span class="name">Text secondary</span><span class="hex">#3d3d5c</span><span class="var">--text-d2</span></div></div>
+  <div class="swatch"><div class="fill" style="background:#7c7c9e"></div><div class="info"><span class="name">Text muted</span><span class="hex">#7c7c9e</span><span class="var">--text-d3</span></div></div>
+  <div class="swatch"><div class="fill" style="background:#f4f5fb;border-bottom:1px solid #eee"></div><div class="info"><span class="name">Page bg (light)</span><span class="hex">#f4f5fb</span><span class="var">--white2</span></div></div>
+  <div class="swatch"><div class="fill" style="background:#eef0f8;border-bottom:1px solid #eee"></div><div class="info"><span class="name">Card bg alt</span><span class="hex">#eef0f8</span><span class="var">--white3</span></div></div>
+  <div class="swatch"><div class="fill" style="background:#e5e7eb;border-bottom:1px solid #eee"></div><div class="info"><span class="name">Border</span><span class="hex">#e5e7eb</span><span class="var">border</span></div></div>
+</div>
+
+<h3 class="sub">Gradients</h3>
+<table class="spec">
+<tr><th>Name</th><th>Value</th><th>Used on</th></tr>
+<tr><td>Grad Main</td><td><code>linear-gradient(135deg,#6366f1,#a855f7,#06b6d4)</code></td><td>Hero headline text-fill, logo, stat numbers</td></tr>
+<tr><td>Grad Button</td><td><code>linear-gradient(135deg,#6366f1,#4f46e5)</code></td><td>Primary buttons, active nav pill</td></tr>
+<tr><td>Grad Green</td><td><code>linear-gradient(135deg,#10b981,#06b6d4)</code></td><td>Success buttons, equipment module accents</td></tr>
+<tr><td>Grad Medicine</td><td><code>linear-gradient(135deg,#34d399,#2dd4bf)</code></td><td>Medicine module banner/badges</td></tr>
+</table>
+
+<h2 class="section-title" id="type"><span class="num">2</span>Typography</h2>
+<p class="section-desc">Font family: <strong>Plus Jakarta Sans</strong> (Google Fonts), used site-wide for headings and body — no secondary typeface. Base body size 15px. Two weights carry most of the UI: 500/600 for labels and buttons, 700/800 for headings.</p>
+<div class="type-row"><div class="sample" style="font-size:4rem;letter-spacing:-1.5px;">Hero H1</div><div class="meta">clamp(2.4rem,6vw,4rem) / 800 / -1.5px tracking</div></div>
+<div class="type-row"><div class="sample" style="font-size:2.25rem;">Section H2</div><div class="meta">2rem–2.25rem / 800 / -0.5px tracking</div></div>
+<div class="type-row"><div class="sample" style="font-size:1.75rem;">Page title H1</div><div class="meta">1.75rem–1.85rem / 800</div></div>
+<div class="type-row"><div class="sample" style="font-size:1.25rem;">Card heading H3</div><div class="meta">17px–20px / 700</div></div>
+<div class="type-row"><div class="sample" style="font-size:15px;font-weight:400;">Body text — default paragraph size across cards, forms and lists.</div><div class="meta">15px / 400 / line-height 1.7</div></div>
+<div class="type-row"><div class="sample" style="font-size:13.5px;font-weight:500;">Form labels, nav links, buttons</div><div class="meta">13px–14px / 500–600</div></div>
+<div class="type-row"><div class="sample" style="font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;">Eyebrow / stat label</div><div class="meta">10.5px–12.5px / 600 / uppercase / +0.6px tracking</div></div>
+
+<h2 class="section-title" id="tokens"><span class="num">3</span>Spacing, radius & shadow</h2>
+<p class="section-desc">Set these as Figma variables too — the app is built almost entirely off this fixed radius/shadow scale, so consistent reuse in Figma will make components easy to swap.</p>
+<table class="spec">
+<tr><th>Token</th><th>Value</th><th>Use</th></tr>
+<tr><td><code>--radius-sm</code></td><td>8px</td><td>Inputs, small buttons, badges</td></tr>
+<tr><td><code>--radius</code></td><td>12px</td><td>Buttons, list rows</td></tr>
+<tr><td><code>--radius-lg</code></td><td>18px</td><td>Cards</td></tr>
+<tr><td><code>--radius-xl</code></td><td>24px</td><td>Hero panels, modals</td></tr>
+<tr><td><code>--shadow-sm</code></td><td>0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06)</td><td>Inputs, nav</td></tr>
+<tr><td><code>--shadow</code></td><td>0 4px 16px rgba(0,0,0,.10), 0 2px 6px rgba(0,0,0,.06)</td><td>Cards, dropdowns</td></tr>
+<tr><td><code>--shadow-lg</code></td><td>0 10px 40px rgba(0,0,0,.14), 0 4px 12px rgba(0,0,0,.08)</td><td>Modals, hover-elevated cards</td></tr>
+<tr><td>Grid gap</td><td>16–24px</td><td>Card grids (stat cards, listing grids)</td></tr>
+<tr><td>Page max-width</td><td>1140–1200px</td><td>Content container</td></tr>
+</table>
+
+<h2 class="section-title" id="components"><span class="num">4</span>Core components</h2>
+<p class="section-desc">Build each of these once as a Figma component with variants, then instance them across every page frame.</p>
+
+<h3 class="sub">Buttons</h3>
+<div class="preview">
+  <button class="btn btn-primary">Get Started Free</button>
+  <button class="btn btn-success">Accept Request</button>
+  <button class="btn btn-danger">Reject</button>
+  <button class="btn btn-secondary">Learn More</button>
+</div>
+<p class="section-desc">Padding 10px 22px, radius 12px, font-weight 600, size 14px. Primary/success use gradient fills with a matching colored box-shadow at 30% opacity below.</p>
+
+<h3 class="sub">Status badges</h3>
+<div class="preview">
+  <span class="badge badge-green">Accepted</span>
+  <span class="badge badge-orange">Pending</span>
+  <span class="badge badge-red">Rejected</span>
+</div>
+
+<h3 class="sub">Cards</h3>
+<div class="preview">
+  <div class="card-demo">
+    <div class="cd-title">Wheelchair — Foldable</div>
+    <div class="cd-sub">Dhanmondi, Dhaka · Donate</div>
+  </div>
+  <div class="card-demo">
+    <div class="cd-title">Paracetamol 500mg</div>
+    <div class="cd-sub">Expires Dec 2026 · 20 tablets</div>
+  </div>
+</div>
+<p class="section-desc">Radius 18px, 1px border, shadow (see tokens), 18px internal padding. Title 700/14–15px, subtitle 400/12px muted.</p>
+
+<h3 class="sub">Form inputs</h3>
+<div class="preview">
+  <input class="input-demo" placeholder="Search medicine or equipment">
+  <select class="input-demo"><option>All categories</option></select>
+</div>
+<p class="section-desc">1.5px border (#e5e7eb), radius 8px, padding 9–10px 14px, font 13.5px.</p>
+
+<h3 class="sub">Navigation bar</h3>
+<div class="preview" style="background:var(--dark);">
+  <span style="color:#fff;font-weight:800;">MediXon</span>
+  <span style="color:rgba(255,255,255,.75);font-size:13px;padding:6px 11px;">About</span>
+  <span style="color:rgba(255,255,255,.75);font-size:13px;padding:6px 11px;">Feedback</span>
+  <span style="color:#fff;background:rgba(99,102,241,.2);font-size:13px;padding:6px 11px;border-radius:8px;">Dashboard</span>
+  <span style="background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;font-size:13px;font-weight:600;padding:6px 14px;border-radius:8px;">Sign Up Free</span>
+</div>
+<p class="section-desc">Dark, sticky top bar. Active link gets a soft indigo pill background; CTA link gets the full gradient button treatment.</p>
+
+<h2 class="section-title" id="sitemap"><span class="num">5</span>Sitemap</h2>
+<div class="sitemap">
+  <div class="tier1">Public</div>
+  <div class="tier2">Landing (index.html) → About → Feedback</div>
+  <div class="tier2">Login / Sign up</div>
+  <div class="tier2">Browse Medicine · Browse Equipment (guest preview)</div>
+  <div class="tier1">Authenticated user</div>
+  <div class="tier2">Dashboard (stat overview, tabs: Equipment / Medicine)</div>
+  <div class="tier2">Browse Medicine → Request Medicine</div>
+  <div class="tier2">Browse Equipment → Request Equipment</div>
+  <div class="tier2">Upload Medicine / Upload Equipment (donor flow)</div>
+  <div class="tier2">My Requests (sent) · Owner Requests (received) — accept / reject</div>
+  <div class="tier2">Chat (list of conversations + thread)</div>
+  <div class="tier2">Profile (edit info, avatar)</div>
+  <div class="tier1">Admin</div>
+  <div class="tier2">Admin login → Admin dashboard (manage users / listings, delete)</div>
+</div>
+
+<h2 class="section-title" id="pages"><span class="num">6</span>Page-by-page layout spec</h2>
+<p class="section-desc">One Figma frame per page below. Frame width 1440 desktop / 375 mobile stack. Wireframe blocks show top-to-bottom section order.</p>
+
+<div class="page-card">
+  <div class="pc-head"><span class="pname">1. Landing page</span><span class="proute">index.html</span></div>
+  <div class="pc-body">
+    <div class="row"><div class="lab">Purpose</div><div class="val">Marketing entry point — explain the platform and drive sign-ups.</div></div>
+    <div class="row"><div class="lab">Sections</div><div class="val">Dark sticky nav → Hero (gradient headline "Share Medical Resources with Bangladesh", subtext, 2 CTA buttons, live stat row) → "Everything you need in one place" feature grid (4 cards: Equipment, Medicine, Real-Time Chat, Smart Search) → How it works → Footer</div></div>
+    <div class="row"><div class="lab">Background</div><div class="val">Dark (#0a0a12) hero with radial gradient glow accents; switches to light (#fff) for feature sections</div></div>
+    <div class="wireframe">┌─────────────────────────────┐
+│ NAV: logo | About Feedback Login [Sign Up]│
+├─────────────────────────────┤
+│  badge · H1 gradient · sub  │
+│  [Get Started] [Learn More] │
+│  stat  stat  stat  stat     │
+├─────────────────────────────┤
+│  H2 "Everything you need"   │
+│  [card][card][card][card]   │
+├─────────────────────────────┤
+│  footer                     │
+└─────────────────────────────┘</div>
+  </div>
+</div>
+
+<div class="page-card">
+  <div class="pc-head"><span class="pname">2. Login / Sign up</span><span class="proute">login.html · signup.html</span></div>
+  <div class="pc-body">
+    <div class="row"><div class="lab">Purpose</div><div class="val">Auth entry — centered card form on dark background.</div></div>
+    <div class="row"><div class="lab">Sections</div><div class="val">Logo → "Welcome back" / "Create account" H2 → email/password fields (+ name, confirm on signup) → primary gradient submit button → link to the other auth page</div></div>
+    <div class="wireframe">┌───────────┐
+│   logo    │
+│ H2 title  │
+│ [input]   │
+│ [input]   │
+│ [Submit]  │
+│ link →    │
+└───────────┘  (card centered on dark bg)</div>
+  </div>
+</div>
+
+<div class="page-card">
+  <div class="pc-head"><span class="pname">3. Dashboard</span><span class="proute">dashboard.html</span></div>
+  <div class="pc-body">
+    <div class="row"><div class="lab">Purpose</div><div class="val">Post-login home — quick stats + tabbed listing preview.</div></div>
+    <div class="row"><div class="lab">Sections</div><div class="val">Nav → page title "Dashboard" → medicine module banner (icon + text) → stat-cards row (4 metrics, color-coded values: blue/green/indigo/med-green) → tab switcher (Equipment / Medicine) → filters row (search + selects) → listing grid or empty-state</div></div>
+    <div class="wireframe">┌─────────────────────────────┐
+│ NAV                         │
+│ Dashboard                   │
+│ [med-banner: icon + text]   │
+│ [stat][stat][stat][stat]    │
+│ (Equipment) (Medicine) tabs │
+│ [search] [filter] [filter]  │
+│ [card][card][card]          │
+│ [card][card][card]          │
+└─────────────────────────────┘</div>
+  </div>
+</div>
+
+<div class="page-card">
+  <div class="pc-head"><span class="pname">4. Browse Medicine / Browse Equipment</span><span class="proute">browseMedicine.html · browseEquipment.php</span></div>
+  <div class="pc-body">
+    <div class="row"><div class="lab">Purpose</div><div class="val">Full searchable listing of donated items.</div></div>
+    <div class="row"><div class="lab">Sections</div><div class="val">Nav → "💊 Browse Medicine" title → community banner strip → filters row (text search, category select, location select) → responsive card grid, each card: image/icon, name, location tag, expiry/condition, "Request" button</div></div>
+    <div class="wireframe">┌─────────────────────────────┐
+│ NAV                         │
+│ 💊 Browse Medicine           │
+│ [search][category][location]│
+│ [card][card][card][card]    │
+│ [card][card][card][card]    │
+└─────────────────────────────┘</div>
+  </div>
+</div>
+
+<div class="page-card">
+  <div class="pc-head"><span class="pname">5. Upload Medicine / Upload Equipment</span><span class="proute">uploadMedicine.html · uploadEquipment.html</span></div>
+  <div class="pc-body">
+    <div class="row"><div class="lab">Purpose</div><div class="val">Donor form to list a new item.</div></div>
+    <div class="row"><div class="lab">Sections</div><div class="val">Nav → "💊 Add Medicine" / "🩺 Add Equipment" title → info/important notice callout (amber) → form card: name, category, quantity/condition, expiry (medicine only), location, description, image upload → submit button</div></div>
+    <div class="wireframe">┌───────────────┐
+│ NAV           │
+│ Title          │
+│ [!] notice     │
+│ ┌───────────┐  │
+│ │ form card │  │
+│ │ field     │  │
+│ │ field     │  │
+│ │ [Submit]  │  │
+│ └───────────┘  │
+└───────────────┘</div>
+  </div>
+</div>
+
+<div class="page-card">
+  <div class="pc-head"><span class="pname">6. My Requests / Owner Requests</span><span class="proute">myRequests.html · ownerRequests.html</span></div>
+  <div class="pc-body">
+    <div class="row"><div class="lab">Purpose</div><div class="val">Track sent requests (My Requests) or manage incoming ones (Owner Requests, with Accept/Reject actions).</div></div>
+    <div class="row"><div class="lab">Sections</div><div class="val">Nav → page title → filter/tab row (status: pending/accepted/rejected) → request list rows: item thumb, item name, requester/owner name, status badge, action buttons (owner view only) or empty-state illustration</div></div>
+    <div class="wireframe">┌─────────────────────────────┐
+│ NAV                         │
+│ My / Received Requests      │
+│ [status tabs]                │
+│ [row: item | badge | actions]│
+│ [row: item | badge | actions]│
+└─────────────────────────────┘</div>
+  </div>
+</div>
+
+<div class="page-card">
+  <div class="pc-head"><span class="pname">7. Chat</span><span class="proute">chat.html</span></div>
+  <div class="pc-body">
+    <div class="row"><div class="lab">Purpose</div><div class="val">Direct messaging between requester and item owner.</div></div>
+    <div class="row"><div class="lab">Sections</div><div class="val">Nav → two-column layout: left sidebar (user list with avatar, name, last message preview), right panel (message thread with bubbles, input bar with attach + send button)</div></div>
+    <div class="wireframe">┌───────┬─────────────────────┐
+│ user  │  thread header       │
+│ list  │  [bubble]            │
+│ list  │        [bubble]      │
+│ list  │  [bubble]            │
+│       │  [ input... ][send]  │
+└───────┴─────────────────────┘</div>
+  </div>
+</div>
+
+<div class="page-card">
+  <div class="pc-head"><span class="pname">8. Profile</span><span class="proute">profile.html</span></div>
+  <div class="pc-body">
+    <div class="row"><div class="lab">Purpose</div><div class="val">View/edit personal info and avatar.</div></div>
+    <div class="row"><div class="lab">Sections</div><div class="val">Nav → "Your Profile" title → avatar upload circle → editable fields (name, phone, address, email) → save button</div></div>
+  </div>
+</div>
+
+<div class="page-card">
+  <div class="pc-head"><span class="pname">9. Feedback</span><span class="proute">feedback.html</span></div>
+  <div class="pc-body">
+    <div class="row"><div class="lab">Purpose</div><div class="val">Simple feedback submission form.</div></div>
+    <div class="row"><div class="lab">Sections</div><div class="val">Nav → "Share Your Feedback" title → rating/star input (optional) → message textarea → submit</div></div>
+  </div>
+</div>
+
+<div class="page-card">
+  <div class="pc-head"><span class="pname">10. About</span><span class="proute">about.html</span></div>
+  <div class="pc-body">
+    <div class="row"><div class="lab">Purpose</div><div class="val">Mission/explainer marketing page.</div></div>
+    <div class="row"><div class="lab">Sections</div><div class="val">Nav → "About MediXon" hero → "Our Mission" (indigo H2) → "Two Powerful Modules" (cyan H2, 2 cards: Equipment / Medicine) → "How It Works" (purple H2, step list) → footer</div></div>
+  </div>
+</div>
+
+<div class="page-card">
+  <div class="pc-head"><span class="pname">11. Admin login / Admin dashboard</span><span class="proute">admin-login.html · admin.php</span></div>
+  <div class="pc-body">
+    <div class="row"><div class="lab">Purpose</div><div class="val">Separate restricted login, then a management console.</div></div>
+    <div class="row"><div class="lab">Sections</div><div class="val">Admin login: centered "Admin Portal" card, same style as user login. Admin dashboard: nav → summary stat cards (users, listings, requests) → data tables for users/medicine/equipment with delete actions</div></div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>
